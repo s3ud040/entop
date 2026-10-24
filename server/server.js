@@ -181,10 +181,14 @@ app.get("/auth/discord/callback", async (req, res) => {
 
     res.cookie("dc_user", JSON.stringify({
       id: me.id,
-      username: me.global_name || me.username,
+      username: me.username,
+      display: me.global_name || me.username,
       avatar: me.avatar,
       at: tok.access_token
     }), { httpOnly: true, signed: true, maxAge: 30 * 864e5, sameSite: "lax" });
+
+    // سجّل/حدّث العضو في قائمة من دخل بالديسكورد (تظهر في لوحة الأدمن)
+    upsertMember({ id: me.id, username: me.username, display: me.global_name || me.username, avatar: me.avatar });
 
     res.redirect("/#/dashboard?discord=ok");
   } catch (e) {
@@ -202,7 +206,7 @@ const currentDiscord = req => {
 
 app.get("/api/me", (req, res) => {
   const d = currentDiscord(req);
-  res.json({ discord: d ? { id: d.id, username: d.username, avatar: d.avatar } : null, mock: MOCK });
+  res.json({ discord: d ? { id: d.id, username: d.username, display: d.display || d.username, avatar: d.avatar } : null, mock: MOCK });
 });
 
 app.get("/api/products", (_req, res) =>
@@ -557,6 +561,47 @@ app.post("/api/admin/manual-orders/:no/cancel", requireAdmin, (req, res) => {
   const o = setManualStatus(req.params.no, "ملغي");
   if (!o) return res.status(404).json({ error: "الطلب غير موجود" });
   res.json({ ok: true, status: o.status });
+});
+
+/* ============================================================
+   الأعضاء — من سجّل دخول عن طريق الديسكورد
+   ============================================================ */
+const U_FILE = path.join(__dirname, "data", "members.json");
+if (!fs.existsSync(U_FILE)) fs.writeFileSync(U_FILE, "[]");
+const readMembers  = () => { try { return JSON.parse(fs.readFileSync(U_FILE, "utf8")); } catch (e) { return []; } };
+const writeMembers = list => fs.writeFileSync(U_FILE, JSON.stringify(list, null, 2));
+function upsertMember(m) {
+  try {
+    const list = readMembers();
+    const now = new Date().toISOString();
+    const ex = list.find(x => x.id === m.id);
+    if (ex) {
+      ex.username = m.username; ex.display = m.display; ex.avatar = m.avatar;
+      ex.lastLogin = now; ex.logins = (ex.logins || 1) + 1;
+    } else {
+      list.push({ id: m.id, username: m.username, display: m.display, avatar: m.avatar, firstLogin: now, lastLogin: now, logins: 1 });
+    }
+    writeMembers(list);
+  } catch (e) {}
+}
+
+// أدمن: قائمة من دخل بالديسكورد + عدد مشترياته
+app.get("/api/admin/members", requireAdmin, (req, res) => {
+  const q = String(req.query.q || "").trim().toLowerCase();
+  const manual = readManual();
+  const paid = readOrders().filter(o => o.status === "paid");
+  let list = readMembers().slice().reverse().map(m => {
+    const uname = String(m.username || "").toLowerCase();
+    const mCount = manual.filter(o => (o.user || "") === uname).length;
+    const pCount = paid.filter(o => o.discordId === m.id).length;
+    return {
+      id: m.id, username: m.username, display: m.display, avatar: m.avatar,
+      firstLogin: m.firstLogin, lastLogin: m.lastLogin, logins: m.logins || 1,
+      orders: mCount + pCount
+    };
+  });
+  if (q) list = list.filter(m => (m.username || "").toLowerCase().includes(q) || (m.display || "").toLowerCase().includes(q) || (m.id || "").includes(q));
+  res.json(list.slice(0, 500));
 });
 
 /* صفحة اللوحة */
