@@ -36,6 +36,7 @@ const DEFAULTS = [
 
   /* ---------- سيارات مميزة ---------- */
   { id:"car-1", cat:"special",  name:"حزمة الهدروليك",                 price:59.99,  roles:["1541222714751193118"], active:true },
+  { id:"car-2", cat:"special",  name:"حزمة مواتر نصب",                 price:119.99, roles:[], active:true },
 
   /* ---------- التعزيز ---------- */
   { id:"boost-1", cat:"boost",  name:"حزمة التعزيز",                   price:79.99,  roles:["1553833618042912809"], active:true },
