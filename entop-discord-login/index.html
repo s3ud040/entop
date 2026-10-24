@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENTOP — المتجر الرسمي</title>
+<meta name="description" content="المتجر الرسمي لسيرفر ENTOP — حزم المواطنين، حزم العسكر، Special Car، حزم التعزيز وحزم أخرى">
+<meta name="theme-color" content="#05070E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<!-- ===== الخلفية ثلاثية الأبعاد ===== -->
+<canvas id="space" aria-hidden="true"></canvas>
+<div id="bg-veil" aria-hidden="true"></div>
+
+<!-- ===== شريط الدخول المباشر للسيرفر ===== -->
+<div class="topbar">
+  <div class="wrap">
+    <a href="#/" class="brand" aria-label="ENTOP">
+      <img src="" data-logo="mark" alt="ENTOP">
+      <span class="brand-txt"><b>ENTOP</b><span>POLICE MOD</span></span>
+    </a>
+    <span class="topbar-spacer"></span>
+    <span class="status"><i class="dot"></i> السيرفر يعمل الآن</span>
+    <button class="ip-btn" id="copyIp" title="نسخ عنوان السيرفر">
+      <span class="en" id="ipTxt">cfx.re/join/pjlx7a</span> ⧉
+    </button>
+    <a class="connect-btn" id="connectTop" href="#">
+      <img src="" data-logo="mark" alt="">
+      دخول السيرفر مباشرة
+    </a>
+  </div>
+</div>
+
+<!-- ===== القائمة ===== -->
+<header class="nav">
+  <div class="wrap">
+    <button class="burger" id="burger" aria-label="القائمة">☰</button>
+    <nav class="nav-links" id="navLinks"><!-- تُبنى من script.js --></nav>
+    <div class="nav-act">
+      <a href="#/cart" class="icon-btn" id="cartBtn">🛒 <span class="lbl">السلة</span><span class="badge" id="cartCount">0</span></a>
+      <a href="#/login" class="icon-btn primary" id="accBtn">تسجيل الدخول</a>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<!-- ===== التذييل ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="about">
+        <img src="" data-logo="full" alt="ENTOP">
+        <h6>ENTOP</h6>
+        <p>المتجر الرسمي لسيرفر ENTOP. حزم مواطنين وعسكر وسيارات مميزة بتسليم داخل السيرفر.</p>
+      </div>
+      <div>
+        <h6>المتجر</h6>
+        <ul>
+          <li><a href="#/">الرئيسية</a></li>
+          <li><a href="#/citizens">حزم المواطنين</a></li>
+          <li><a href="#/military">حزم العسكر</a></li>
+          <li><a href="#/special">Special Car</a></li>
+          <li><a href="#/boost">حزم التعزيز</a></li>
+          <li><a href="#/other">حزم أخرى</a></li>
+        </ul>
+      </div>
+      <div>
+        <h6>الدفع والطلب</h6>
+        <ul>
+          <li><a href="#/cart">السلة</a></li>
+          <li><a href="#/login">تسجيل الدخول</a></li>
+        </ul>
+      </div>
+      <div>
+        <h6>الدعم</h6>
+        <ul>
+          <li><a href="#" id="discordLink" target="_blank" rel="noopener">سيرفر الديسكورد</a></li>
+          <li><a href="#" id="connectFoot">الدخول لسيرفر FiveM</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footcopy">
+      <span>جميع الحقوق محفوظة <b>Entop</b> © <span class="en">Lawrence</span> <span class="en" id="yr">2026</span></span>
+      <span class="en" style="letter-spacing:2px;font-size:12px">ENTOP POLICE MOD</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>window.__ENTOP_SERVER__ = true;</script>
+<script src="./script.js"></script>
+<script src="./space-bg.js"></script>
+</body>
+</html>

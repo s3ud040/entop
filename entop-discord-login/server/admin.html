@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم — Entop Police Mod</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070E;--panel:#0D1424;--panel2:#111A2E;--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);
+  --teal:#1FE3B6;--azure:#2F8BF2;--violet:#7A5BF0;--magenta:#E51FC4;
+  --text:#EAF1FB;--muted:#8CA0BE;--gold:#FFC44D;--red:#FF7A90;
+  --grad:linear-gradient(115deg,var(--teal) 0%,var(--azure) 42%,var(--violet) 66%,var(--magenta) 100%);
+  --grad-soft:linear-gradient(115deg,rgba(31,227,182,.16),rgba(47,139,242,.16) 45%,rgba(229,31,196,.16));
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',system-ui,sans-serif;line-height:1.7;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(900px 500px at 85% -5%,rgba(31,227,182,.12),transparent 60%),
+             radial-gradient(800px 500px at 10% 0%,rgba(229,31,196,.11),transparent 60%),var(--bg)}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:0;font-family:inherit;font-size:inherit;color:inherit;background:none}
+input,select{font-family:inherit;font-size:inherit;color:inherit}
+.en{font-family:'Chakra Petch',sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* ===== تسجيل الدخول ===== */
+.login{max-width:420px;margin:14vh auto;padding:34px 30px;border-radius:22px;
+  border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));
+  box-shadow:0 18px 50px -18px rgba(0,0,0,.85)}
+.login h1{font-size:23px;text-align:center;margin-bottom:6px}
+.login p{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:13.5px;font-weight:700;margin-bottom:7px;color:#BFCEE4}
+.f input,.f select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line2);
+  background:rgba(255,255,255,.035);transition:.16s}
+.f input:focus{outline:none;border-color:var(--teal);background:rgba(31,227,182,.06)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:12px;
+  background:var(--grad);color:#04070E;font-weight:800;transition:.16s}
+.btn:hover{filter:brightness(1.08)}
+.btn.full{width:100%;padding:14px}
+.btn.ghost{background:none;border:1px solid var(--line2);color:var(--text);font-weight:700}
+.btn.ghost:hover{border-color:var(--teal);color:var(--teal)}
+.btn.sm{padding:7px 13px;font-size:13px;border-radius:10px}
+.msg{padding:11px 14px;border-radius:11px;font-size:13.5px;font-weight:600;margin-bottom:14px;display:none}
+.msg.err{display:block;background:rgba(229,31,60,.13);border:1px solid rgba(229,31,60,.4);color:var(--red)}
+.msg.ok{display:block;background:rgba(31,227,182,.12);border:1px solid rgba(31,227,182,.4);color:var(--teal)}
+
+/* ===== الهيكل ===== */
+header{border-bottom:1px solid var(--line);background:rgba(6,9,17,.85);backdrop-filter:blur(14px);
+  position:sticky;top:0;z-index:20}
+header .wrap{display:flex;align-items:center;gap:14px;min-height:64px;flex-wrap:wrap}
+.logo{font-family:'Chakra Petch',sans-serif;font-weight:700;letter-spacing:3px;font-size:17px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'Chakra Petch',sans-serif}
+.sp{flex:1}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;padding:14px 0}
+nav.tabs button{padding:9px 16px;border-radius:11px;font-weight:700;font-size:14.5px;color:#C3D2E6;transition:.16s}
+nav.tabs button:hover{background:rgba(255,255,255,.05);color:#fff}
+nav.tabs button.on{background:var(--grad-soft);color:#fff;box-shadow:inset 0 0 0 1px var(--line2)}
+main{padding-bottom:70px}
+.card{border-radius:20px;border:1px solid var(--line);padding:24px;
+  background:linear-gradient(180deg,var(--panel2),var(--panel));margin-bottom:18px}
+.card h2{font-size:19px;margin-bottom:4px}
+.card .lead{color:var(--muted);font-size:14px;margin-bottom:18px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px}
+.kpi{padding:18px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.kpi span{font-size:12.5px;color:var(--muted);display:block;margin-bottom:6px}
+.kpi b{font-family:'Chakra Petch',sans-serif;font-size:25px;font-weight:700;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:start;padding:12px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.scroll{overflow-x:auto}
+.pill{padding:4px 11px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap;display:inline-block}
+.pill.paid{background:rgba(31,227,182,.14);color:var(--teal);border:1px solid rgba(31,227,182,.35)}
+.pill.pending{background:rgba(255,196,77,.14);color:var(--gold);border:1px solid rgba(255,196,77,.35)}
+.pill.bad{background:rgba(255,90,120,.14);color:var(--red);border:1px solid rgba(255,90,120,.35)}
+.tools{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.tools input,.tools select{padding:10px 14px;border-radius:11px;border:1px solid var(--line2);background:var(--panel)}
+.tools input{flex:1;min-width:180px}
+.empty{text-align:center;padding:44px;color:var(--muted)}
+
+/* ===== المنتجات ===== */
+.prow{display:grid;grid-template-columns:1.4fr 100px 1fr 90px 40px;gap:10px;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--line)}
+.prow:last-of-type{border-bottom:0}
+.prow input{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.035)}
+.prow .hd{font-size:12.5px;color:var(--muted)}
+.prow .cat{font-size:11px;color:var(--muted);display:block}
+.sw{width:44px;height:25px;border-radius:999px;background:rgba(255,255,255,.12);position:relative;transition:.18s;flex:none}
+.sw::after{content:'';position:absolute;top:3px;inset-inline-end:3px;width:19px;height:19px;border-radius:50%;
+  background:#fff;transition:.18s}
+.sw.on{background:var(--teal)}
+.sw.on::after{inset-inline-end:22px}
+
+/* ===== الفحص ===== */
+.chk{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.chk:last-child{border-bottom:0}
+.chk i{font-style:normal;width:22px;text-align:center}
+.chk .v{color:var(--muted);font-size:13px;margin-inline-start:auto;font-family:'Chakra Petch',sans-serif}
+.toast{position:fixed;bottom:24px;inset-inline-start:24px;z-index:60;padding:13px 20px;border-radius:13px;
+  border:1px solid var(--line2);background:rgba(13,20,36,.97);font-weight:700;font-size:14px;
+  transform:translateY(150%);transition:transform .3s}
+.toast.show{transform:translateY(0)}
+.toast.bad{border-color:rgba(255,90,120,.5)}
+@media (max-width:760px){
+  .prow{grid-template-columns:1fr 1fr;gap:8px}
+  .prow .hd{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const app = $("#app");
+let TAB = "over", PRODUCTS = [];
+
+let tT;
+function toast(m, bad){
+  const t = $("#toast"); t.textContent = m; t.className = "toast show" + (bad ? " bad" : "");
+  clearTimeout(tT); tT = setTimeout(() => t.className = "toast", 3000);
+}
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const api = async (url, opts) => {
+  const r = await fetch(url, { credentials:"same-origin", headers:{ "Content-Type":"application/json" }, ...opts });
+  const d = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error(d.error || "خطأ في الطلب");
+  return d;
+};
+
+/* ================= تسجيل الدخول ================= */
+function loginView(configured){
+  app.innerHTML = `<div class="login">
+    <h1>لوحة التحكم</h1>
+    <p class="tag" style="text-align:center;margin-bottom:20px">ENTOP POLICE MOD</p>
+    <div class="msg" id="m"></div>
+    ${configured ? `
+      <div class="f"><label>كلمة مرور المالك</label>
+        <input type="password" id="pw" placeholder="••••••••" autofocus></div>
+      <button class="btn full" id="go">دخول</button>`
+    : `<div class="msg err" style="display:block">
+        لوحة التحكم مقفلة: عبّي <b>ADMIN_PASSWORD</b> في ملف .env ثم أعد تشغيل السيرفر.</div>`}
+  </div>`;
+  const go = async () => {
+    try{
+      await api("/api/admin/login", { method:"POST", body: JSON.stringify({ password: $("#pw").value }) });
+      boot();
+    }catch(e){ const m = $("#m"); m.className = "msg err"; m.textContent = e.message; }
+  };
+  $("#go")?.addEventListener("click", go);
+  $("#pw")?.addEventListener("keydown", e => e.key === "Enter" && go());
+}
+
+/* ================= الهيكل ================= */
+function shell(){
+  app.innerHTML = `
+    <header><div class="wrap">
+      <div><div class="logo">ENTOP</div><div class="tag">ADMIN PANEL</div></div>
+      <span class="sp"></span>
+      <a class="btn ghost sm" href="/" target="_blank">فتح المتجر ↗</a>
+      <button class="btn ghost sm" id="out">خروج</button>
+    </div></header>
+    <div class="wrap">
+      <nav class="tabs">
+        <button data-t="over">نظرة عامة</button>
+        <button data-t="manual">طلبات التحويل</button>
+        <button data-t="orders">الطلبات (الدفع الإلكتروني)</button>
+        <button data-t="products">المنتجات والرتب</button>
+        <button data-t="health">فحص الإعدادات</button>
+      </nav>
+      <main id="main"></main>
+    </div>`;
+  $("#out").onclick = async () => { await api("/api/admin/logout", { method:"POST" }); boot(); };
+  document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => go(b.dataset.t));
+  go(TAB);
+}
+function go(t){
+  TAB = t;
+  document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  ({ over:overView, manual:manualView, orders:ordersView, products:productsView, health:healthView })[t]();
+}
+
+/* ================= طلبات التحويل البنكي ================= */
+async function manualView(){
+  const m = $("#main");
+  m.innerHTML = `<div class="card">
+    <h2>طلبات التحويل البنكي</h2>
+    <p class="lead">اعتمد الطلب بعد استلام التحويل، أو ألغِه. الحالة تظهر للعميل في لوحته.</p>
+    <div class="tools">
+      <input id="mq" placeholder="بحث برقم الطلب أو معرّف الديسكورد أو الاسم">
+      <button class="btn sm" id="mrf">تحديث</button>
+    </div>
+    <div id="mlist"><div class="empty">جارٍ التحميل…</div></div>
+  </div>`;
+  const pill = s => {
+    var cls = s === "معتمد" ? "paid" : (s === "ملغي" ? "bad" : "pending");
+    return `<span class="pill ${cls}">${esc(s)}</span>`;
+  };
+  const load = async () => {
+    try{
+      const rows = await api(`/api/admin/manual-orders?q=${encodeURIComponent($("#mq").value)}`);
+      $("#mlist").innerHTML = rows.length ? `<div class="scroll"><table>
+        <thead><tr><th>الطلب</th><th>الحزم</th><th>الإجمالي</th><th>الديسكورد</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+        <tbody>${rows.map(o => `<tr>
+          <td class="en">#${esc(o.no)}</td>
+          <td>${o.items.map(i => esc(i.name) + (i.qty > 1 ? ` ×${i.qty}` : "")).join("، ")}</td>
+          <td class="en">${esc(o.total || "—")}</td>
+          <td>@${esc(o.user)}${o.name ? ` <span style="color:#8aa">(${esc(o.name)})</span>` : ""}</td>
+          <td class="en">${esc(o.date || "")}</td>
+          <td>${pill(o.status)}</td>
+          <td style="white-space:nowrap">
+            ${o.status !== "معتمد" ? `<button class="btn sm" data-ap="${esc(o.no)}">اعتماد</button>` : ""}
+            ${o.status !== "ملغي" ? `<button class="btn ghost sm" data-cn="${esc(o.no)}">إلغاء</button>` : ""}
+          </td>
+        </tr>`).join("")}</tbody></table></div>` : `<div class="empty">ما فيه طلبات تحويل بعد</div>`;
+
+      document.querySelectorAll("[data-ap]").forEach(b => b.onclick = async () => {
+        b.disabled = true;
+        try{ await api(`/api/admin/manual-orders/${b.dataset.ap}/approve`, { method:"POST" }); toast("تم اعتماد الطلب ✅"); load(); }
+        catch(e){ toast(e.message, true); b.disabled = false; }
+      });
+      document.querySelectorAll("[data-cn]").forEach(b => b.onclick = async () => {
+        if(!confirm("تأكيد إلغاء الطلب؟")) return;
+        b.disabled = true;
+        try{ await api(`/api/admin/manual-orders/${b.dataset.cn}/cancel`, { method:"POST" }); toast("تم إلغاء الطلب"); load(); }
+        catch(e){ toast(e.message, true); b.disabled = false; }
+      });
+    }catch(e){ $("#mlist").innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+  };
+  $("#mrf").onclick = load;
+  $("#mq").oninput = () => { clearTimeout(window.__mq); window.__mq = setTimeout(load, 300); };
+  load();
+}
+
+/* ================= نظرة عامة ================= */
+async function overView(){
+  const m = $("#main");
+  m.innerHTML = `<div class="card"><div class="empty">جارٍ التحميل…</div></div>`;
+  try{
+    const s = await api("/api/admin/stats");
+    m.innerHTML = `
+      <div class="card">
+        <h2>الإيرادات</h2><p class="lead">المبالغ المدفوعة فعلياً وشاملة الضريبة.</p>
+        <div class="kpis">
+          <div class="kpi"><span>اليوم</span><b class="en">${s.revenueToday}</b></div>
+          <div class="kpi"><span>آخر 30 يوم</span><b class="en">${s.revenue30}</b></div>
+          <div class="kpi"><span>الإجمالي</span><b class="en">${s.revenueTotal}</b></div>
+          <div class="kpi"><span>متوسط الطلب</span><b class="en">${s.avg}</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>الطلبات</h2>
+        <div class="kpis">
+          <div class="kpi"><span>مدفوعة</span><b class="en">${s.ordersPaid}</b></div>
+          <div class="kpi"><span>معلّقة</span><b class="en">${s.ordersPending}</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>الأكثر مبيعاً</h2>
+        ${s.top.length ? `<div class="scroll"><table><tbody>
+          ${s.top.map(([n, q]) => `<tr><td>${esc(n)}</td><td class="en" style="text-align:end">${q}</td></tr>`).join("")}
+        </tbody></table></div>` : `<div class="empty">ما فيه مبيعات بعد</div>`}
+      </div>`;
+  }catch(e){ m.innerHTML = `<div class="card"><div class="empty">${esc(e.message)}</div></div>`; }
+}
+
+/* ================= الطلبات ================= */
+async function ordersView(){
+  const m = $("#main");
+  m.innerHTML = `<div class="card">
+    <h2>الطلبات</h2><p class="lead">آخر 200 طلب. تقدر تعيد إعطاء الرتبة لو فشلت.</p>
+    <div class="tools">
+      <input id="q" placeholder="بحث برقم الطلب أو اسم الديسكورد أو الإيميل">
+      <select id="st"><option value="all">كل الحالات</option><option value="paid">مدفوعة</option><option value="pending">معلّقة</option></select>
+      <button class="btn sm" id="rf">تحديث</button>
+    </div>
+    <div id="list"><div class="empty">جارٍ التحميل…</div></div>
+  </div>`;
+  const load = async () => {
+    try{
+      const rows = await api(`/api/admin/orders?q=${encodeURIComponent($("#q").value)}&status=${$("#st").value}`);
+      $("#list").innerHTML = rows.length ? `<div class="scroll"><table>
+        <thead><tr><th>الطلب</th><th>الحزم</th><th>المبلغ</th><th>الديسكورد</th><th>الرتب</th><th>التاريخ</th><th>الحالة</th><th></th></tr></thead>
+        <tbody>${rows.map(o => `<tr>
+          <td class="en">#${esc(o.no)}</td>
+          <td>${o.items.map(i => esc(i.name) + (i.qty > 1 ? ` ×${i.qty}` : "")).join("، ")}</td>
+          <td class="en">${esc(o.amount)}</td>
+          <td>${esc(o.discordName || "—")}<br><span class="en" style="font-size:11px;color:var(--muted)">${esc(o.discordId || "")}</span></td>
+          <td>${o.status === "paid"
+              ? (o.rolesGiven ? `<span class="pill paid">${o.rolesGiven} ✓</span>` : `<span class="pill bad">لم تُعطَ</span>`)
+              : "—"}</td>
+          <td class="en" style="font-size:12px">${esc((o.paidAt || o.createdAt || "").slice(0, 16).replace("T", " "))}</td>
+          <td><span class="pill ${o.status}">${o.status === "paid" ? "مدفوع" : "معلّق"}</span></td>
+          <td>${o.status === "paid" ? `<button class="btn ghost sm" data-re="${esc(o.no)}">إعادة الرتبة</button>` : ""}</td>
+        </tr>`).join("")}</tbody></table></div>` : `<div class="empty">ما فيه طلبات مطابقة</div>`;
+
+      document.querySelectorAll("[data-re]").forEach(b => b.onclick = async () => {
+        b.disabled = true; b.textContent = "…";
+        try{
+          const r = await api(`/api/admin/orders/${b.dataset.re}/regrant`, { method:"POST" });
+          toast(r.ok ? `تم إعطاء ${r.done} رتبة ✅` : (r.error || `فشل ${r.failed} رتبة`), !r.ok);
+          load();
+        }catch(e){ toast(e.message, true); b.disabled = false; b.textContent = "إعادة الرتبة"; }
+      });
+    }catch(e){ $("#list").innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+  };
+  $("#rf").onclick = load;
+  $("#st").onchange = load;
+  let t; $("#q").oninput = () => { clearTimeout(t); t = setTimeout(load, 350); };
+  load();
+}
+
+/* ================= المنتجات والرتب ================= */
+async function productsView(){
+  const m = $("#main");
+  m.innerHTML = `<div class="card"><div class="empty">جارٍ التحميل…</div></div>`;
+  try{ PRODUCTS = await api("/api/admin/products"); }
+  catch(e){ m.innerHTML = `<div class="card"><div class="empty">${esc(e.message)}</div></div>`; return; }
+
+  m.innerHTML = `<div class="card">
+    <h2>المنتجات والرتب</h2>
+    <p class="lead">السعر هنا هو المعتمد للدفع. رقم الرتبة تنسخه من ديسكورد بعد تفعيل «وضع المطوّر»،
+       وتقدر تحط أكثر من رتبة بينها فاصلة.</p>
+    <div class="prow hd"><span>الحزمة</span><span>السعر</span><span>أرقام رتب الديسكورد</span><span>متاح</span><span></span></div>
+    ${PRODUCTS.map((p, i) => `<div class="prow" data-i="${i}">
+      <div><input class="nm" value="${esc(p.name)}">
+        <span class="cat en">${esc(p.id)} · ${p.cat === "military" ? "عسكرية" : "مواطنين"}</span></div>
+      <input class="pr en" type="number" step="0.01" value="${p.price}">
+      <input class="rl en" value="${esc((p.roles || []).join(", "))}" placeholder="1234567890123456789">
+      <div class="sw ${p.active !== false ? "on" : ""}"></div>
+      <span></span>
+    </div>`).join("")}
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="btn" id="save">حفظ التغييرات</button>
+      <button class="btn ghost" id="reload">تراجع</button>
+    </div>
+  </div>`;
+
+  document.querySelectorAll(".prow .sw").forEach(s => s.onclick = () => s.classList.toggle("on"));
+  $("#reload").onclick = productsView;
+  $("#save").onclick = async () => {
+    const list = [...document.querySelectorAll(".prow[data-i]")].map(row => {
+      const p = PRODUCTS[+row.dataset.i];
+      return { ...p,
+        name: row.querySelector(".nm").value,
+        price: parseFloat(row.querySelector(".pr").value),
+        roles: row.querySelector(".rl").value.split(/[,\s]+/).filter(Boolean),
+        active: row.querySelector(".sw").classList.contains("on") };
+    });
+    try{
+      const r = await api("/api/admin/products", { method:"POST", body: JSON.stringify({ products: list }) });
+      PRODUCTS = r.products;
+      const dropped = list.filter((p, i) => p.roles.length !== r.products[i].roles.length);
+      toast(dropped.length ? "تم الحفظ — بعض أرقام الرتب غير صالحة وتم تجاهلها" : "تم الحفظ ✅", !!dropped.length);
+      productsView();
+    }catch(e){ toast(e.message, true); }
+  };
+}
+
+/* ================= فحص الإعدادات ================= */
+async function healthView(){
+  const m = $("#main");
+  m.innerHTML = `<div class="card"><div class="empty">جارٍ الفحص…</div></div>`;
+  try{
+    const h = await api("/api/admin/health");
+    const row = (label, ok, note = "") =>
+      `<div class="chk"><i>${ok ? "✅" : "⚠️"}</i><span>${label}</span><span class="v">${esc(note)}</span></div>`;
+    m.innerHTML = `
+      <div class="card"><h2>الدفع</h2><p class="lead">لازم كلها ✅ قبل استقبال فلوس حقيقية.</p>
+        ${row("مفتاح ميسر", h.payments.moyasar, h.payments.mock ? "وضع تجربة" : "مفعّل")}
+        ${row("المفتاح الحقيقي (sk_live)", h.payments.live, h.payments.live ? "" : "حالياً مفتاح تجربة")}
+        ${row("سر الويبهوك", h.payments.webhookSecret)}
+      </div>
+      <div class="card"><h2>الديسكورد</h2>
+        ${row("Client ID", h.discord.client)}
+        ${row("Client Secret", h.discord.secret)}
+        ${row("توكن البوت", h.discord.bot)}
+        ${row("معرّف السيرفر", h.discord.guild)}
+        ${row("قناة إشعارات الطلبات", h.discord.logChannel, "اختياري")}
+      </div>
+      <div class="card"><h2>الموقع</h2>
+        ${row("رابط الموقع", !!h.site.url, h.site.url)}
+        ${row("HTTPS", h.site.https, h.site.https ? "" : "مطلوب للدفع والديسكورد")}
+      </div>
+      <div class="card"><h2>المنتجات</h2>
+        ${row("حزم مفعّلة", h.products.active > 0, h.products.active + " من " + h.products.total)}
+        ${row("كل الحزم لها رتبة", !h.products.withoutRoles.length,
+              h.products.withoutRoles.length ? "بدون رتبة: " + h.products.withoutRoles.join("، ") : "")}
+      </div>`;
+  }catch(e){ m.innerHTML = `<div class="card"><div class="empty">${esc(e.message)}</div></div>`; }
+}
+
+/* ================= التشغيل ================= */
+async function boot(){
+  try{
+    const s = await api("/api/admin/session");
+    s.admin ? shell() : loginView(s.configured);
+  }catch(e){ loginView(true); }
+}
+boot();
+</script>
+</body>
+</html>
