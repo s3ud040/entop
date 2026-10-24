@@ -621,11 +621,12 @@ async function syncFromDB() {
       return;
     }
     console.log("🍃 MongoDB متصل — التخزين الدائم مفعّل");
+    // المنتجات والرتب مصدرها الكود (products.js) — ما نسحبها من القاعدة
+    // حتى تطبّق أي تعديل على الرتب مباشرة عند النشر.
     const stores = [
       { name: "orders",        file: DB_FILE },
       { name: "manual_orders", file: M_FILE },
-      { name: "members",       file: U_FILE },
-      { name: "products",      file: PRODUCTS_FILE }
+      { name: "members",       file: U_FILE }
     ];
     for (const st of stores) {
       const data = await DB.pull(st.name);

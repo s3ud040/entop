@@ -19,34 +19,34 @@ const FILE = path.join(__dirname, "data", "products.json");
 
 const DEFAULTS = [
   /* ---------- حزم المواطنين ---------- */
-  { id:"cit-1", cat:"citizens", name:"حزمة المواطنين",                 price:80.99,  roles:[], active:true },
-  { id:"cit-2", cat:"citizens", name:"حزمة القولد",                    price:149.99, roles:[], active:true },
-  { id:"cit-3", cat:"citizens", name:"حزمة المرهمات",                  price:249.99, roles:[], active:true },
-  { id:"cit-4", cat:"citizens", name:"حزمة التهريب + تهريب (الحبوش)",  price:185.49, roles:[], active:true },
-  { id:"cit-5", cat:"citizens", name:"حزمة التوالف",                   price:119.99, roles:[], active:true },
-  { id:"cit-6", cat:"citizens", name:"حزمة الشاحنات + مركز الوظائف",   price:149.99, roles:[], active:true },
-  { id:"cit-7", cat:"citizens", name:"حزمة الاسلحة",                   price:99.99,  roles:[], active:true },
-  { id:"cit-8", cat:"citizens", name:"حزمة VIP",                       price:349.99, roles:[], active:true },
+  { id:"cit-1", cat:"citizens", name:"حزمة المواطنين",                 price:80.99,  roles:["1541222601374965890"], active:true },
+  { id:"cit-2", cat:"citizens", name:"حزمة القولد",                    price:149.99, roles:["1541222464862818395"], active:true },
+  { id:"cit-3", cat:"citizens", name:"حزمة المرهمات",                  price:249.99, roles:["1541222530705133648"], active:true },
+  { id:"cit-4", cat:"citizens", name:"حزمة التهريب + تهريب (الحبوش)",  price:185.49, roles:["1541222332859949147","1550534221532233798"], active:true },
+  { id:"cit-5", cat:"citizens", name:"حزمة التوالف",                   price:119.99, roles:["1542157630682955897"], active:true },
+  { id:"cit-6", cat:"citizens", name:"حزمة الشاحنات + مركز الوظائف",   price:149.99, roles:["1542255826385772684"], active:true },
+  { id:"cit-7", cat:"citizens", name:"حزمة الاسلحة",                   price:99.99,  roles:["1301658165880029256"], active:true },
+  { id:"cit-8", cat:"citizens", name:"حزمة VIP",                       price:349.99, roles:["1542248076025143336"], active:true },
 
   /* ---------- الحزم العسكرية ---------- */
-  { id:"mil-1", cat:"military", name:"حزم السريات (Special)",          price:239.99, roles:[], active:true },
-  { id:"mil-2", cat:"military", name:"حزم السريات (Standard)",         price:69.99,  roles:[], active:true },
-  { id:"mil-3", cat:"military", name:"حزمة المكافحة",                  price:69.99,  roles:[], active:true },
-  { id:"mil-4", cat:"military", name:"حزمة الطوارئ",                   price:89.99,  roles:[], active:true },
+  { id:"mil-1", cat:"military", name:"حزم السريات (Special)",          price:239.99, roles:["1541222222075662416"], active:true },
+  { id:"mil-2", cat:"military", name:"حزم السريات (Standard)",         price:69.99,  roles:["1541222849539211355"], active:true },
+  { id:"mil-3", cat:"military", name:"حزمة المكافحة",                  price:69.99,  roles:["1541222786490433646"], active:true },
+  { id:"mil-4", cat:"military", name:"حزمة الطوارئ",                   price:89.99,  roles:["1541222667007295589"], active:true },
 
   /* ---------- سيارات مميزة ---------- */
-  { id:"car-1", cat:"special",  name:"حزمة الهدروليك",                 price:59.99,  roles:[], active:true },
+  { id:"car-1", cat:"special",  name:"حزمة الهدروليك",                 price:59.99,  roles:["1541222714751193118"], active:true },
 
   /* ---------- التعزيز ---------- */
-  { id:"boost-1", cat:"boost",  name:"حزمة التعزيز",                   price:79.99,  roles:[], active:true },
+  { id:"boost-1", cat:"boost",  name:"حزمة التعزيز",                   price:79.99,  roles:["1553833618042912809"], active:true },
 
   /* ---------- الدراجات ---------- */
-  { id:"bike-1", cat:"bikes",   name:"حزمة الدراجات النارية",          price:119.99, roles:[], active:true },
+  { id:"bike-1", cat:"bikes",   name:"حزمة الدراجات النارية",          price:119.99, roles:["1559676324828684329"], active:true },
 
   /* ---------- حزم أخرى ---------- */
-  { id:"other-1", cat:"other",  name:"حزمة السكنات",                   price:109.99, roles:[], active:true },
-  { id:"other-2", cat:"other",  name:"فك الباند النهائي",              price:199.99, roles:[], active:true },
-  { id:"other-3", cat:"other",  name:"فك سحب الحزم",                   price:89.99,  roles:[], active:true }
+  { id:"other-1", cat:"other",  name:"حزمة السكنات",                   price:109.99, roles:["1541222297623470080"], active:true },
+  { id:"other-2", cat:"other",  name:"فك الباند النهائي",              price:199.99, roles:["1563570204276035675"], active:true },
+  { id:"other-3", cat:"other",  name:"فك سحب الحزم",                   price:89.99,  roles:["1563570316058300426"], active:true }
 ];
 
 const CATS = ["citizens", "military", "special", "boost", "bikes", "other"];
