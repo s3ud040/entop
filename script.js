@@ -628,6 +628,26 @@ function doLogin(){
   toast("أهلاً بعودتك 👋");
   location.hash = "#/dashboard";
 }
+function syncDiscordSession(){
+  // يجلب جلسة الديسكورد من السيرفر (بعد OAuth) ويسجّل الدخول محلياً حتى تظهر الواجهة مسجّلة
+  return fetch("/api/me").then(r => r.json()).then(d => {
+    if(d && d.discord){
+      const dc = d.discord;
+      const handle = String(dc.username || "").toLowerCase();
+      if(handle){
+        const users = Store.users();
+        let u = users.find(x => x.discord === handle);
+        if(!u){
+          u = { name: dc.username, discord: handle, joined: new Date().toLocaleDateString("en-GB"), discordId: dc.id, avatar: dc.avatar || "" };
+          users.push(u); Store.saveUsers(users);
+        } else {
+          u.discordId = dc.id; if(dc.avatar) u.avatar = dc.avatar; Store.update(u);
+        }
+        Store.login(handle);
+      }
+    }
+  }).catch(function(){});
+}
 function paintAcc(){
   const me = Store.me(), b = $("#accBtn");
   if(!b) return;
@@ -764,7 +784,7 @@ document.querySelectorAll('[data-logo]').forEach(i => i.src = i.dataset.logo ===
 document.title           = CONFIG.storeName + " — المتجر الرسمي";
 
 window.addEventListener("hashchange", render);
-render();
+if(SERVER){ syncDiscordSession().then(render); } else { render(); }
 
 /* ============================================================
    الخلفية ثلاثية الأبعاد (Three.js) — شبكة نيون + جزيئات
