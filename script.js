@@ -416,11 +416,14 @@ views.dashboard = () => {
   const me = Store.me();
   if(!me){ location.hash = "#/login"; return ""; }
   const initial = (me.name || me.discord)[0].toUpperCase();
+  const avatarHtml = (me.discordId && me.avatar)
+    ? `<div class="avatar"><img src="https://cdn.discordapp.com/avatars/${esc(me.discordId)}/${esc(me.avatar)}.png?size=128" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></div>`
+    : `<div class="avatar">${esc(initial)}</div>`;
   return `
   <div class="wrap dash">
     <aside class="side">
       <div class="who">
-        <div class="avatar">${esc(initial)}</div>
+        ${avatarHtml}
         <div><b>${esc(me.name)}</b><span>@${esc(me.discord)}</span></div>
       </div>
       <nav id="dnav">
@@ -634,14 +637,15 @@ function syncDiscordSession(){
     if(d && d.discord){
       const dc = d.discord;
       const handle = String(dc.username || "").toLowerCase();
+      const display = dc.display || dc.username;
       if(handle){
         const users = Store.users();
         let u = users.find(x => x.discord === handle);
         if(!u){
-          u = { name: dc.username, discord: handle, joined: new Date().toLocaleDateString("en-GB"), discordId: dc.id, avatar: dc.avatar || "" };
+          u = { name: display, discord: handle, joined: new Date().toLocaleDateString("en-GB"), discordId: dc.id, avatar: dc.avatar || "" };
           users.push(u); Store.saveUsers(users);
         } else {
-          u.discordId = dc.id; if(dc.avatar) u.avatar = dc.avatar; Store.update(u);
+          u.discordId = dc.id; u.name = display; if(dc.avatar) u.avatar = dc.avatar; Store.update(u);
         }
         Store.login(handle);
       }
