@@ -24,7 +24,8 @@ require("dotenv").config(ENV_FILE ? { path: ENV_FILE } : {});
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
-const { loadProducts, saveProducts, BUYER_ROLE, VAT } = require("./products");
+const { loadProducts, saveProducts, BUYER_ROLE, VAT, FILE: PRODUCTS_FILE } = require("./products");
+const DB = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -64,7 +65,7 @@ fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
 if (!fs.existsSync(DB_FILE)) fs.writeFileSync(DB_FILE, "[]");
 
 const readOrders  = () => JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
-const writeOrders = list => fs.writeFileSync(DB_FILE, JSON.stringify(list, null, 2));
+const writeOrders = list => { fs.writeFileSync(DB_FILE, JSON.stringify(list, null, 2)); DB.push("orders", list); };
 const findOrder   = fn => readOrders().find(fn);
 function saveOrder(order) {
   const list = readOrders();
@@ -206,6 +207,8 @@ const currentDiscord = req => {
 
 app.get("/api/me", (req, res) => {
   const d = currentDiscord(req);
+  // سجّل العضو في القائمة حتى لو كان داخل بكوكي سابق (يضمن ظهوره في لوحة الأدمن)
+  if (d && d.id) upsertMember({ id: d.id, username: d.username, display: d.display || d.username, avatar: d.avatar });
   res.json({ discord: d ? { id: d.id, username: d.username, display: d.display || d.username, avatar: d.avatar } : null, mock: MOCK });
 });
 
@@ -487,7 +490,7 @@ app.post("/api/admin/orders/:no/regrant", requireAdmin, async (req, res) => {
 app.get("/api/admin/products", requireAdmin, (_req, res) => res.json(loadProducts()));
 app.post("/api/admin/products", requireAdmin, (req, res) => {
   if (!Array.isArray(req.body?.products)) return res.status(400).json({ error: "صيغة غير صحيحة" });
-  res.json({ ok: true, products: saveProducts(req.body.products) });
+  const saved = saveProducts(req.body.products); DB.push("products", saved); res.json({ ok: true, products: saved });
 });
 
 /* ============================================================
@@ -497,7 +500,7 @@ app.post("/api/admin/products", requireAdmin, (req, res) => {
 const M_FILE = path.join(__dirname, "data", "manual_orders.json");
 if (!fs.existsSync(M_FILE)) fs.writeFileSync(M_FILE, "[]");
 const readManual  = () => { try { return JSON.parse(fs.readFileSync(M_FILE, "utf8")); } catch (e) { return []; } };
-const writeManual = list => fs.writeFileSync(M_FILE, JSON.stringify(list, null, 2));
+const writeManual = list => { fs.writeFileSync(M_FILE, JSON.stringify(list, null, 2)); DB.push("manual_orders", list); };
 
 // إنشاء طلب تحويل جديد
 app.post("/api/order", (req, res) => {
@@ -569,7 +572,7 @@ app.post("/api/admin/manual-orders/:no/cancel", requireAdmin, (req, res) => {
 const U_FILE = path.join(__dirname, "data", "members.json");
 if (!fs.existsSync(U_FILE)) fs.writeFileSync(U_FILE, "[]");
 const readMembers  = () => { try { return JSON.parse(fs.readFileSync(U_FILE, "utf8")); } catch (e) { return []; } };
-const writeMembers = list => fs.writeFileSync(U_FILE, JSON.stringify(list, null, 2));
+const writeMembers = list => { fs.writeFileSync(U_FILE, JSON.stringify(list, null, 2)); DB.push("members", list); };
 function upsertMember(m) {
   try {
     const list = readMembers();
@@ -607,12 +610,46 @@ app.get("/api/admin/members", requireAdmin, (req, res) => {
 /* صفحة اللوحة */
 app.get("/admin", (_req, res) => res.sendFile(path.join(__dirname, "admin.html")));
 
-app.listen(PORT, () => {
-  console.log(`\n✅ Entop store server → http://localhost:${PORT}`);
-  console.log(MOCK ? "⚠️  وضع التجربة: الدفع وهمي (MOYASAR_SECRET_KEY فاضي)" : "💳 ميسر مفعّل");
-  if (!DC.bot || !DC.guild) console.log("⚠️  بيانات بوت الديسكورد ناقصة — الرتب ما راح تنعطى");
-  console.log(ENV_FILE ? `📄 ملف الإعدادات: ${ENV_FILE}` : "❌ ما لقيت ملف .env — انسخ env.example.txt وسمّه .env داخل مجلد server");
-  console.log(ADMIN_PASSWORD
-    ? `🔐 لوحة التحكم → ${SITE}/admin  (كلمة المرور مقروءة من .env، طولها ${ADMIN_PASSWORD.length} حرف)`
-    : "❌ ADMIN_PASSWORD فاضي — اللوحة مقفلة. تأكد من السطر ADMIN_PASSWORD=... في .env");
+/* ============================================================
+   الإقلاع: مزامنة مع MongoDB (إن وُجد) ثم تشغيل السيرفر
+   ============================================================ */
+async function syncFromDB() {
+  try {
+    const connected = await DB.initDB();
+    if (!connected) {
+      console.log("⚠️  MONGODB_URI فاضي — التخزين بالملفات فقط (يُمسح عند إعادة النشر/النوم على Render المجاني)");
+      return;
+    }
+    console.log("🍃 MongoDB متصل — التخزين الدائم مفعّل");
+    const stores = [
+      { name: "orders",        file: DB_FILE },
+      { name: "manual_orders", file: M_FILE },
+      { name: "members",       file: U_FILE },
+      { name: "products",      file: PRODUCTS_FILE }
+    ];
+    for (const st of stores) {
+      const data = await DB.pull(st.name);
+      if (Array.isArray(data)) {
+        fs.writeFileSync(st.file, JSON.stringify(data, null, 2));   // استرجاع من القاعدة
+      } else {
+        let cur = [];
+        try { cur = JSON.parse(fs.readFileSync(st.file, "utf8")); } catch (e) {}
+        DB.push(st.name, cur);                                       // أول مرة: ازرع القاعدة من الملف
+      }
+    }
+  } catch (e) {
+    console.error("MongoDB sync error:", e.message, "— التخزين بالملفات فقط");
+  }
+}
+
+syncFromDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`\n✅ Entop store server → http://localhost:${PORT}`);
+    console.log(MOCK ? "⚠️  وضع التجربة: الدفع وهمي (MOYASAR_SECRET_KEY فاضي)" : "💳 ميسر مفعّل");
+    if (!DC.bot || !DC.guild) console.log("⚠️  بيانات بوت الديسكورد ناقصة — الرتب ما راح تنعطى");
+    console.log(DB.hasDB() ? "🍃 التخزين الدائم: MongoDB" : "📄 التخزين: ملفات محلية فقط");
+    console.log(ADMIN_PASSWORD
+      ? `🔐 لوحة التحكم → ${SITE}/admin  (كلمة المرور طولها ${ADMIN_PASSWORD.length} حرف)`
+      : "❌ ADMIN_PASSWORD فاضي — اللوحة مقفلة");
+  });
 });

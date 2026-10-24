@@ -636,17 +636,19 @@ function syncDiscordSession(){
   return fetch("/api/me").then(r => r.json()).then(d => {
     if(d && d.discord){
       const dc = d.discord;
-      const handle = String(dc.username || "").toLowerCase();
+      const handle  = String(dc.username || "").toLowerCase();
       const display = dc.display || dc.username;
       if(handle){
         const users = Store.users();
-        let u = users.find(x => x.discord === handle);
+        // ابحث بالـ Discord ID (ثابت) أو باليوزر، وحدّث كل الحقول من السيرفر
+        let u = users.find(x => (dc.id && x.discordId === dc.id) || x.discord === handle);
         if(!u){
           u = { name: display, discord: handle, joined: new Date().toLocaleDateString("en-GB"), discordId: dc.id, avatar: dc.avatar || "" };
-          users.push(u); Store.saveUsers(users);
+          users.push(u);
         } else {
-          u.discordId = dc.id; u.name = display; if(dc.avatar) u.avatar = dc.avatar; Store.update(u);
+          u.discordId = dc.id; u.name = display; u.discord = handle; if(dc.avatar) u.avatar = dc.avatar;
         }
+        Store.saveUsers(users);
         Store.login(handle);
       }
     }
@@ -748,7 +750,7 @@ document.addEventListener("click", e => {
 
   const dn = t.closest("#dnav button");
   if(dn){
-    if(dn.dataset.t === "out"){ Store.logout(); toast("تم تسجيل الخروج"); location.hash = "#/"; return; }
+    if(dn.dataset.t === "out"){ Store.logout(); if(SERVER){ fetch("/api/discord/unlink",{method:"POST"}).catch(function(){}); } toast("تم تسجيل الخروج"); location.hash = "#/"; return; }
     document.querySelectorAll("#dnav button").forEach(b => b.classList.remove("on"));
     dn.classList.add("on"); dashTab(dn.dataset.t); return;
   }

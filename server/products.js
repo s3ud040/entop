@@ -22,7 +22,7 @@ const DEFAULTS = [
   { id:"cit-1", cat:"citizens", name:"حزمة المواطنين",                 price:80.99,  roles:[], active:true },
   { id:"cit-2", cat:"citizens", name:"حزمة القولد",                    price:149.99, roles:[], active:true },
   { id:"cit-3", cat:"citizens", name:"حزمة المرهمات",                  price:249.99, roles:[], active:true },
-  { id:"cit-4", cat:"citizens", name:"حزمة التهريب + تهريب (الحبوش)",  price:185.49, roles:["111...","222..."] , active:true },
+  { id:"cit-4", cat:"citizens", name:"حزمة التهريب + تهريب (الحبوش)",  price:185.49, roles:[], active:true },
   { id:"cit-5", cat:"citizens", name:"حزمة التوالف",                   price:119.99, roles:[], active:true },
   { id:"cit-6", cat:"citizens", name:"حزمة الشاحنات + مركز الوظائف",   price:149.99, roles:[], active:true },
   { id:"cit-7", cat:"citizens", name:"حزمة الاسلحة",                   price:99.99,  roles:[], active:true },
