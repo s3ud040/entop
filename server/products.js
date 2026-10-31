@@ -27,6 +27,7 @@ const DEFAULTS = [
   { id:"cit-6", cat:"citizens", name:"حزمة الشاحنات + مركز الوظائف",   price:149.99, roles:["1542255826385772684"], active:true },
   { id:"cit-7", cat:"citizens", name:"حزمة الاسلحة",                   price:99.99,  roles:["1301658165880029256"], active:true },
   { id:"cit-8", cat:"citizens", name:"حزمة VIP",                       price:349.99, roles:["1542248076025143336"], active:true },
+  { id:"cit-9", cat:"citizens", name:"حزمة وظيفة التاكسي السعودي",      price:69.99,  roles:["1541223296262217829"], active:true },
 
   /* ---------- الحزم العسكرية ---------- */
   { id:"mil-1", cat:"military", name:"حزم السريات (Special)",          price:239.99, roles:["1541222222075662416"], active:true },
